@@ -1,6 +1,10 @@
 package com.example.zencartest.presentation.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -52,12 +56,22 @@ fun RegistrationScreen() {
 
     fun onDateSelected(selectedDateMillis: Long?) {
         selectedDateMillis?.let {
-            birthDate = convertMillisToDate(it) // Convert the milliseconds to a date string
+            birthDate = convertMillisToDate(it)
         }
-        showDatePicker = false // Hide the date picker after selection
+        showDatePicker = false
+    }
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
     }
 
-    // The modal date picker
+    val launcherGallery =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            Log.d("uri", "$uri")
+            imageUri = uri
+           // uri?.let { CreateProductEvent.SetPathToImage(it) }?.let { onEvent(it) }
+        }
+
+
     if (showDatePicker) {
         DatePickerModal(
             onDateSelected = { onDateSelected(it) },
@@ -78,7 +92,7 @@ fun RegistrationScreen() {
                 .imePadding(),
             contentAlignment = Alignment.Center,
         ) {
-            // Добавляем вертикальный скроллинг
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -86,10 +100,8 @@ fun RegistrationScreen() {
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Заголовок приложения
                 TextMainApp(nameApp = "Registration")
 
-                // Поле для ввода электронной почты
                 TextFieldLogin(
                     textHint = "Email",
                     color = Color.Gray,
@@ -105,13 +117,12 @@ fun RegistrationScreen() {
                     value = email,
                     onValueChange = { email = it },
                     keyboardActions = KeyboardActions(onNext = {
-                        passwordFocusRequester.requestFocus() // Переход к полю пароля
+                        passwordFocusRequester.requestFocus()
                     }),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Поле для ввода пароля
                 TextFieldLogin(
                     textHint = "Password",
                     color = Color.Gray,
@@ -128,13 +139,12 @@ fun RegistrationScreen() {
                     onValueChange = { password = it },
                     keyboardActions = KeyboardActions(onNext = {
                         birthDateFocusRequester.requestFocus()
-                        showDatePicker = !showDatePicker// Переход к полю даты рождения
+                        showDatePicker = !showDatePicker
                     }),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Поле для ввода даты рождения
                 TextFieldLogin(
                     textHint = "Date of Birth (DD/MM/YYYY)",
                     color = Color.Gray,
@@ -152,18 +162,18 @@ fun RegistrationScreen() {
                     value = birthDate,
                     onValueChange = { birthDate = it },
                     keyboardActions = KeyboardActions(onDone = {
-                        keyboardController?.hide() // Скрыть клавиатуру
-                        focusManager.clearFocus() // Сброс фокуса
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
                     }),
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Окно для выбора фотографии
+
                 Button(
                     onClick = {
-                        // Логика выбора фото (добавить функционал для открытия галереи)
-                        selectedPhoto = "Фото выбрано" // Пример результата
+                        launcherGallery.launch("image/*")
+                        selectedPhoto = "Фото выбрано"
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Gray,
@@ -178,7 +188,7 @@ fun RegistrationScreen() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Кнопка для регистрации
+
                 ButtonLogInAuthorizationApp(
                     onClick = {
                         // Логика регистрации

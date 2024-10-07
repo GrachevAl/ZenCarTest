@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ZenCarTest</string>
+
+
+    <string name="log_in">Log In</string>
+    <string name="continue_without_registration">Continue without registration</string>
+    <string name="app_version">v 1.0.0</string>
+    <string name="generic_error">Something wrong happened. Please try again.</string>
+    <string name="notallfields">Не все поля заполнены</string>
 </resources>

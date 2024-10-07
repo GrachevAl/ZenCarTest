@@ -11,5 +11,6 @@ data class UserEntity(
     val name: String,
     val birthDate: String,
     val photoUrl: String?,
+    val timeAdded: Long,
     val token: String,
 )

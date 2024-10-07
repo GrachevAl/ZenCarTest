@@ -27,14 +27,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun generateTestUsers(): List<User> {
-    return List(15) { index ->
-        User(
-            id = index.toString(),
-            name = "User $index",
-            birthDate = "199$index-01-01",
-            photoUrl = if (index % 2 == 0) "https://cdn1.ozone.ru/s3/multimedia-1-n/6908895311.jpg" else null, // Используем изображение через одного
-            token = "token_$index",
-        )
-    }
-}

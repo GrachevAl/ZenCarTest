@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.zencartest.data.model.UserEntity
 import com.example.zencartest.domain.model.User
+import java.util.Date
 
 fun UserEntity.toUser(): User {
     return User(
@@ -11,6 +12,7 @@ fun UserEntity.toUser(): User {
         name = this.name,
         birthDate = this.birthDate,
         photoUrl = this.photoUrl,
+        timeAdded= Date().time,
         token = this.token,
     )
 }
@@ -22,6 +24,7 @@ fun User.toUserEntity(): UserEntity {
         name = this.name,
         birthDate = this.birthDate,
         photoUrl = this.photoUrl,
+        timeAdded= Date().time,
         token = generateRandomToken(),
     )
 }
