@@ -28,22 +28,27 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.zencartest.R
 import com.example.zencartest.component.ButtonLogInAuthorizationApp
 import com.example.zencartest.component.DatePickerModal
 import com.example.zencartest.component.TextFieldLogin
 import com.example.zencartest.component.TextMainApp
+import com.example.zencartest.presentation.event.RegistrationEvent
+import com.example.zencartest.presentation.viewmodel.RegistrationViewModel
 import com.example.zencartest.utils.convertMillisToDate
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(showBackground = true)
 @Composable
-fun RegistrationScreen() {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var birthDate by rememberSaveable { mutableStateOf("") }
+fun RegistrationScreen(
+    viewModel: RegistrationViewModel = hiltViewModel<RegistrationViewModel>(),
+    onNavigate: () -> Unit,
+    onEvent: (RegistrationEvent) -> Unit,
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    var birthDate by rememberSaveable { mutableStateOf(state.birthDate) }
     var selectedPhoto by rememberSaveable { mutableStateOf<String?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -56,21 +61,27 @@ fun RegistrationScreen() {
 
     fun onDateSelected(selectedDateMillis: Long?) {
         selectedDateMillis?.let {
-            birthDate = convertMillisToDate(it)
+            val selectedDate = convertMillisToDate(it)
+            onEvent(RegistrationEvent.SetBirthDate(selectedDate))
+            birthDate = selectedDate
         }
         showDatePicker = false
     }
+
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
 
     val launcherGallery =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            Log.d("uri", "$uri")
-            imageUri = uri
-           // uri?.let { CreateProductEvent.SetPathToImage(it) }?.let { onEvent(it) }
+            uri?.let {
+                Log.d("uri", "$it")
+                imageUri = it
+                onEvent(RegistrationEvent.SetPathToImage(it))
+                selectedPhoto = "Фото выбрано"
+                Log.d("Photo", "$selectedPhoto")
+            }
         }
-
 
     if (showDatePicker) {
         DatePickerModal(
@@ -92,7 +103,6 @@ fun RegistrationScreen() {
                 .imePadding(),
             contentAlignment = Alignment.Center,
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -114,8 +124,8 @@ fun RegistrationScreen() {
                     icon = {
                         Icon(imageVector = Icons.Default.Email, contentDescription = "emailIcon")
                     },
-                    value = email,
-                    onValueChange = { email = it },
+                    value = state.emailOrName,
+                    onValueChange = { onEvent(RegistrationEvent.SetNameUser(it)) },
                     keyboardActions = KeyboardActions(onNext = {
                         passwordFocusRequester.requestFocus()
                     }),
@@ -135,8 +145,8 @@ fun RegistrationScreen() {
                     icon = {
                         Icon(imageVector = Icons.Default.Lock, contentDescription = "passwordIcon")
                     },
-                    value = password,
-                    onValueChange = { password = it },
+                    value = state.password,
+                    onValueChange = { onEvent(RegistrationEvent.SetPassword(it)) },
                     keyboardActions = KeyboardActions(onNext = {
                         birthDateFocusRequester.requestFocus()
                         showDatePicker = !showDatePicker
@@ -159,8 +169,8 @@ fun RegistrationScreen() {
                             Icon(imageVector = Icons.Default.DateRange, contentDescription = "birthDateIcon")
                         }
                     },
-                    value = birthDate,
-                    onValueChange = { birthDate = it },
+                    value = state.birthDate,
+                    onValueChange = { },
                     keyboardActions = KeyboardActions(onDone = {
                         keyboardController?.hide()
                         focusManager.clearFocus()
@@ -169,11 +179,9 @@ fun RegistrationScreen() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-
                 Button(
                     onClick = {
                         launcherGallery.launch("image/*")
-                        selectedPhoto = "Фото выбрано"
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Gray,
@@ -183,15 +191,14 @@ fun RegistrationScreen() {
                 ) {
                     Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "photoIcon")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = selectedPhoto ?: "Choose a Photo")
+                    Text(text = if (state.imagePath?.isNotEmpty() == true) "Фото выбрано" else "Выбрать фото")
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-
                 ButtonLogInAuthorizationApp(
                     onClick = {
-                        // Логика регистрации
+                        onEvent(RegistrationEvent.RegistrationUser)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF6200EE),
@@ -202,5 +209,8 @@ fun RegistrationScreen() {
                 )
             }
         }
+    }
+    if (state.isRegistrationSuccess) {
+        onNavigate()
     }
 }

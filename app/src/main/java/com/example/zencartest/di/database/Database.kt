@@ -1,4 +1,4 @@
-package com.example.zencartest.di
+package com.example.zencartest.di.database
 
 import android.content.Context
 import androidx.room.Room

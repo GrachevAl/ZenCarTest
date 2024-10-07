@@ -9,6 +9,7 @@ data class UserEntity(
     @PrimaryKey
     val id: String,
     val name: String,
+    val password: String,
     val birthDate: String,
     val photoUrl: String?,
     val timeAdded: Long,

@@ -10,6 +10,7 @@ fun UserEntity.toUser(): User {
     return User(
         id = this.id,
         name = this.name,
+        password = this.password,
         birthDate = this.birthDate,
         photoUrl = this.photoUrl,
         timeAdded= Date().time,
@@ -22,9 +23,10 @@ fun User.toUserEntity(): UserEntity {
     return UserEntity(
         id = getUniqueIdentifier(),
         name = this.name,
+        password = this.password,
         birthDate = this.birthDate,
         photoUrl = this.photoUrl,
         timeAdded= Date().time,
-        token = generateRandomToken(),
+        token = this.token,
     )
 }

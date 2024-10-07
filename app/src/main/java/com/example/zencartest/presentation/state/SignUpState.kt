@@ -5,5 +5,6 @@ data class SignUpState(
     val password: String = "",
     val repeatPassword: String = "",
     val birthDate: String = "",
-    val imagePath: String = "",
+    val imagePath: String? = null,
+    val isRegistrationSuccess: Boolean = false,
 )

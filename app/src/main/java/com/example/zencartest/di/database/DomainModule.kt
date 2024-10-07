@@ -1,4 +1,4 @@
-package com.example.zencartest.di
+package com.example.zencartest.di.database
 
 import com.example.zencartest.domain.repository.LocalDatabaseRepository
 import com.example.zencartest.domain.usecase.DeleteUserUseCase

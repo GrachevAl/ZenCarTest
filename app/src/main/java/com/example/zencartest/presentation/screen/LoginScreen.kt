@@ -32,9 +32,8 @@ import com.example.zencartest.component.TextFieldLogin
 import com.example.zencartest.component.TextMainApp
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview(showBackground = true)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(goToPageRegister: () -> Unit) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
@@ -122,7 +121,7 @@ fun LoginScreen() {
 
                 ButtonLogInAuthorizationApp(
                     onClick = {
-                        // Ваш обработчик регистрации
+                        goToPageRegister()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF6200EE),
