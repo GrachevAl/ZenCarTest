@@ -44,6 +44,7 @@ import com.example.zencartest.component.TextMainApp
 import com.example.zencartest.presentation.event.RegistrationEvent
 import com.example.zencartest.presentation.viewmodel.RegistrationViewModel
 import com.example.zencartest.utils.convertMillisToDate
+import com.example.zencartest.utils.convertToDateTextField
 import com.example.zencartest.utils.snackbar.SnackbarManager
 import kotlinx.coroutines.delay
 
@@ -72,7 +73,7 @@ fun RegistrationScreen(
 
     fun onDateSelected(selectedDateMillis: Long?) {
         selectedDateMillis?.let {
-            val selectedDate = convertMillisToDate(it)
+            val selectedDate = convertToDateTextField(it)
             onEvent(RegistrationEvent.SetBirthDate(selectedDate))
             birthDate = selectedDate
         }

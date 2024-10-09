@@ -41,6 +41,7 @@ import com.example.zencartest.presentation.event.ListUserEvent
 import com.example.zencartest.presentation.viewmodel.ListUserViewModel
 import com.example.zencartest.utils.ALBUM_STORAGE
 import com.example.zencartest.utils.convertMillisToDate
+import com.example.zencartest.utils.convertMillisToDateBirthday
 import com.example.zencartest.utils.snackbar.SnackbarManager
 import java.io.File
 
@@ -197,7 +198,6 @@ fun UserCard(user: User, onEvent: (ListUserEvent) -> Unit) {
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-
                 Text(
                     text = stringResource(R.string.birthday, user.birthDate),
                     style = MaterialTheme.typography.bodySmall,
