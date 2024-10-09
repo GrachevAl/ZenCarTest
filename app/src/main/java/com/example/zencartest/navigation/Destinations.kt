@@ -14,5 +14,8 @@ sealed class Destinations {
     data object Register : Destinations()
 
     @Serializable
-    data object ListUsers : Destinations()
+    data class ListDataUsers(
+        val login: String,
+        val password: String,
+    ) : Destinations()
 }

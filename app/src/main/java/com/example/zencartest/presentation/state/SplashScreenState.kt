@@ -3,9 +3,9 @@ package com.example.zencartest.presentation.state
 import androidx.compose.runtime.Stable
 
 @Stable
-data class SignInState(
-    val email: String = "",
+data class SplashScreenState(
+    val isLoggedIn: Boolean = false,
+    val login: String = "",
     val password: String = "",
-    val userInDatabase: Boolean = false,
-    val token: String? = null,
+    val isLoading: Boolean = true,
 )

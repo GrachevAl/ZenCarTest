@@ -1,6 +1,5 @@
-package com.example.zencartest.domain.usecase
+package com.example.zencartest.domain.usecase.database
 
-import android.content.Context
 import android.net.Uri
 import com.example.zencartest.domain.repository.LocalDatabaseRepository
 

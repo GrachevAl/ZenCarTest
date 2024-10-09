@@ -8,8 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.zencartest.R
 import com.example.zencartest.domain.model.User
-import com.example.zencartest.domain.usecase.InsertUserUseCase
-import com.example.zencartest.domain.usecase.SaveImageToPrivateStorageUseCase
+import com.example.zencartest.domain.usecase.database.CheckUserExistsUseCase
+import com.example.zencartest.domain.usecase.database.InsertUserUseCase
+import com.example.zencartest.domain.usecase.database.SaveImageToPrivateStorageUseCase
 import com.example.zencartest.domain.usecase.prefs.SaveUserTokenToDataStorageUseCase
 import com.example.zencartest.presentation.event.RegistrationEvent
 import com.example.zencartest.presentation.state.SignUpState
@@ -28,6 +29,7 @@ class RegistrationViewModel @Inject constructor(
     private val insertUserUseCase: InsertUserUseCase,
     private val saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase,
     private val saveUserTokenToDataStorageUseCase: SaveUserTokenToDataStorageUseCase,
+    private val checkUserExistsUseCase: CheckUserExistsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SignUpState())
@@ -68,6 +70,9 @@ class RegistrationViewModel @Inject constructor(
                 }
                 Log.d("Image", "${_state.value.imagePath}")
             }
+
+            is RegistrationEvent.IsRegistrationSuccess -> {
+            }
         }
     }
 
@@ -79,31 +84,33 @@ class RegistrationViewModel @Inject constructor(
         val pathToImage = _state.value.imagePath
         val generationName = generateImageNameForStorage()
         val generationToken = generateRandomToken()
-        if (name.isBlank() || password.isNullOrBlank() || pathToImage.isNullOrBlank()
-        ) {
+
+        if (name.isBlank() || password.isNullOrBlank() || pathToImage.isNullOrBlank()) {
             SnackbarManager.showMessage(R.string.notallfields)
             return
         }
 
-        val user = User(
-            name = name,
-            password = password,
-            birthDate = birthDate,
-            photoUrl = generationName,
-            token = generationToken,
-        )
         viewModelScope.launch {
+            val userExists = checkUserExistsUseCase.invoke(name)
+            if (userExists) {
+                SnackbarManager.showMessage("Пользователь уже существует")
+                return@launch
+            }
+
+            val user = User(
+                name = name,
+                password = password,
+                birthDate = birthDate,
+                photoUrl = generationName,
+                token = generationToken,
+            )
+
             saveImageToPrivateStorageUseCase.invoke(pathToImage.toUri(), generationName)
             insertUserUseCase.invoke(user)
             saveUserTokenToDataStorageUseCase.invoke(generationToken)
+
             _state.update {
-                it.copy(
-                    emailOrName = "",
-                    password = "",
-                    imagePath = null,
-                    birthDate = "",
-                    isRegistrationSuccess = true,
-                )
+                it.copy(isRegistrationSuccess = true)
             }
         }
     }

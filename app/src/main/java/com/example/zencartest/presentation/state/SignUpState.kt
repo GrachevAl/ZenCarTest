@@ -1,5 +1,8 @@
 package com.example.zencartest.presentation.state
 
+import androidx.compose.runtime.Stable
+
+@Stable
 data class SignUpState(
     val emailOrName: String = "",
     val password: String = "",

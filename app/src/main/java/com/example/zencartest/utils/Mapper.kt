@@ -13,7 +13,7 @@ fun UserEntity.toUser(): User {
         password = this.password,
         birthDate = this.birthDate,
         photoUrl = this.photoUrl,
-        timeAdded= Date().time,
+        timeAdded = this.timeAdded,
         token = this.token,
     )
 }
@@ -26,7 +26,7 @@ fun User.toUserEntity(): UserEntity {
         password = this.password,
         birthDate = this.birthDate,
         photoUrl = this.photoUrl,
-        timeAdded= Date().time,
+        timeAdded = Date().time,
         token = this.token,
     )
 }

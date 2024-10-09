@@ -6,3 +6,4 @@ const val TABLE_NAME = "USERS"
 
 const val SETTINGS_PREFERENCES = "settings_preferences"
 const val USER_TOKEN = "user_token"
+const val ALBUM_STORAGE = "MY_ALBUM"

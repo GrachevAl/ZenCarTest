@@ -1,7 +1,7 @@
 package com.example.zencartest.di.prefs
 
 import com.example.zencartest.domain.repository.PreferencesRepository
-import com.example.zencartest.domain.usecase.prefs.ClearTokenFromStorage
+import com.example.zencartest.domain.usecase.prefs.ClearTokenFromStorageUseCase
 import com.example.zencartest.domain.usecase.prefs.GetUserTokenFromDataStorageUseCase
 import com.example.zencartest.domain.usecase.prefs.SaveUserTokenToDataStorageUseCase
 import dagger.Module
@@ -30,7 +30,7 @@ class DomainModule {
     @Provides
     fun provideClearTokenFromStorageUseCase(
         preferencesRepository: PreferencesRepository,
-    ): ClearTokenFromStorage {
-        return ClearTokenFromStorage(preferencesRepository)
+    ): ClearTokenFromStorageUseCase {
+        return ClearTokenFromStorageUseCase(preferencesRepository)
     }
 }

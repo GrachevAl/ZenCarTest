@@ -2,9 +2,26 @@
     <string name="app_name">ZenCarTest</string>
 
 
-    <string name="log_in">Log In</string>
+
     <string name="continue_without_registration">Continue without registration</string>
     <string name="app_version">v 1.0.0</string>
     <string name="generic_error">Something wrong happened. Please try again.</string>
     <string name="notallfields">Не все поля заполнены</string>
+    <string name="AppName">ZenCar</string>
+    <string name="HintEmail">Почта</string>
+    <string name="HintPassword">Пароль</string>
+    <string name="TextRegisterButton">Регистрация</string>
+    <string name="PhotoSelectedText">Фото выбрано</string>
+    <string name="log_in">Войти</string>
+    <string name="RegistrationTextScreen">Регистрация</string>
+    <string name="date_of_birth">Дата рождения</string>
+    <string name="Choose_a_photo">Выбрать фото</string>
+    <string name="User">Пользователь: %1$s</string>
+    <string name="log_out_of_your_account">Вы точно хотите выйти из аккаунта?</string>
+    <string name="text_delete_user">Вы хотите удалить пользователя?</string>
+    <string name="birthday">Дата рождения: %1$s</string>
+    <string name="added_text">Добавлен: %1$s</string>
+    <string name="ok">Да</string>
+    <string name="cancel">Отмена</string>
+    <string name="no">Нет</string>
 </resources>

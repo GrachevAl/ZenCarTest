@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.zencartest.R
 
 @Composable
 fun DialogWithImage(
@@ -62,13 +64,13 @@ fun DialogWithImage(
                         onClick = { onDismissRequest() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Нет")
+                        Text(stringResource(R.string.no))
                     }
                     TextButton(
                         onClick = { onConfirmation() },
                         modifier = Modifier.padding(8.dp),
                     ) {
-                        Text("Да")
+                        Text(stringResource(id = R.string.ok))
                     }
                 }
             }

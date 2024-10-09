@@ -2,9 +2,10 @@ package com.example.zencartest.presentation.screen
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,30 +27,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.zencartest.R
 import com.example.zencartest.component.ButtonLogInAuthorizationApp
 import com.example.zencartest.component.DatePickerModal
+import com.example.zencartest.component.SnackBarToast
 import com.example.zencartest.component.TextFieldLogin
 import com.example.zencartest.component.TextMainApp
 import com.example.zencartest.presentation.event.RegistrationEvent
 import com.example.zencartest.presentation.viewmodel.RegistrationViewModel
 import com.example.zencartest.utils.convertMillisToDate
+import com.example.zencartest.utils.snackbar.SnackbarManager
+import kotlinx.coroutines.delay
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RegistrationScreen(
     viewModel: RegistrationViewModel = hiltViewModel<RegistrationViewModel>(),
-    onNavigate: () -> Unit,
+    onNavigate: (login: String, password: String) -> Unit,
     onEvent: (RegistrationEvent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     var birthDate by rememberSaveable { mutableStateOf(state.birthDate) }
     var selectedPhoto by rememberSaveable { mutableStateOf<String?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -55,6 +63,9 @@ fun RegistrationScreen(
     val emailFocusRequester = FocusRequester()
     val passwordFocusRequester = FocusRequester()
     val birthDateFocusRequester = FocusRequester()
+
+    val context = LocalContext.current
+    val snackbarMessage by SnackbarManager.snackbarMessages.collectAsState()
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -75,11 +86,9 @@ fun RegistrationScreen(
     val launcherGallery =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                Log.d("uri", "$it")
                 imageUri = it
                 onEvent(RegistrationEvent.SetPathToImage(it))
-                selectedPhoto = "Фото выбрано"
-                Log.d("Photo", "$selectedPhoto")
+                selectedPhoto = context.getString(R.string.PhotoSelectedText)
             }
         }
 
@@ -94,6 +103,12 @@ fun RegistrationScreen(
         modifier = Modifier
             .fillMaxWidth()
             .imePadding(),
+        snackbarHost = {
+            SnackBarToast(
+                snackbarMessage = snackbarMessage,
+                context = context,
+            )
+        },
     ) { innerPadding ->
 
         Box(
@@ -110,10 +125,10 @@ fun RegistrationScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                TextMainApp(nameApp = "Registration")
+                TextMainApp(nameApp = stringResource(R.string.RegistrationTextScreen))
 
                 TextFieldLogin(
-                    textHint = "Email",
+                    textHint = stringResource(id = R.string.HintEmail),
                     color = Color.Gray,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -134,7 +149,7 @@ fun RegistrationScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TextFieldLogin(
-                    textHint = "Password",
+                    textHint = stringResource(id = R.string.HintPassword),
                     color = Color.Gray,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,7 +171,7 @@ fun RegistrationScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TextFieldLogin(
-                    textHint = "Date of Birth (DD/MM/YYYY)",
+                    textHint = stringResource(R.string.date_of_birth),
                     color = Color.Gray,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -191,7 +206,17 @@ fun RegistrationScreen(
                 ) {
                     Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "photoIcon")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = if (state.imagePath?.isNotEmpty() == true) "Фото выбрано" else "Выбрать фото")
+                    Text(
+                        text = if (state.imagePath?.isNotEmpty() == true) {
+                            stringResource(
+                                id = R.string.PhotoSelectedText,
+                            )
+                        } else {
+                            stringResource(
+                                R.string.Choose_a_photo,
+                            )
+                        },
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -204,13 +229,15 @@ fun RegistrationScreen(
                         containerColor = Color(0xFF6200EE),
                         contentColor = Color.White,
                     ),
-                    text = "Register",
+                    text = stringResource(id = R.string.RegistrationTextScreen),
                     iconResource = painterResource(id = R.drawable.baseline_login_24),
                 )
             }
         }
     }
     if (state.isRegistrationSuccess) {
-        onNavigate()
+        LaunchedEffect(Unit) {
+            onNavigate(state.emailOrName, state.password)
+        }
     }
 }

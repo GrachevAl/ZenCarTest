@@ -8,8 +8,10 @@ import android.os.Build
 import android.os.Environment
 import androidx.annotation.RequiresApi
 import com.example.zencartest.data.database.Database
+import com.example.zencartest.data.model.UserEntity
 import com.example.zencartest.domain.model.User
 import com.example.zencartest.domain.repository.LocalDatabaseRepository
+import com.example.zencartest.utils.ALBUM_STORAGE
 import com.example.zencartest.utils.Resource
 import com.example.zencartest.utils.toUser
 import com.example.zencartest.utils.toUserEntity
@@ -47,11 +49,16 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun getAllUsersExcludingCurrent(currentUserId: String): Flow<Resource<List<User>>> = flow {
+    override suspend fun checkUserExists(login: String): Boolean {
+        val userEntity = database.repositoryDao().getUserByLogin(login)
+        return userEntity != null
+    }
+
+    override suspend fun getAllUsersExcludingCurrent(login: String): Flow<Resource<List<User>>> = flow {
         emit(Resource.Loading)
         try {
-            val result = database.repositoryDao().getAllUsers() // Получаем всех пользователей
-            val filteredUsers = result.filter { it.id != currentUserId } // Фильтруем текущего пользователя
+            val result = database.repositoryDao().getAllUsers()
+            val filteredUsers = result.filter { it.name != login }
             if (filteredUsers.isNotEmpty()) {
                 val userList = filteredUsers.map { it.toUser() }
                 emit(Resource.Success(userList))
@@ -67,9 +74,14 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
         return database.repositoryDao().getUserById(userId)?.toUser()
     }
 
+    override suspend fun getUserByLogin(login: String): User? {
+        val userEntity = database.repositoryDao().getUserByLogin(login)
+        return userEntity?.toUser()
+    }
+
     override suspend fun saveImageToPrivateStorage(uri: Uri, nameOfImage: String): String {
         val filePath =
-            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "my_album")
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), ALBUM_STORAGE)
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
@@ -81,5 +93,13 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
             .compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
 
         return file.absolutePath
+    }
+
+    override suspend fun getUserByToken(token: String): User? {
+        return database.repositoryDao().getUserByToken(token)?.toUser()
+    }
+
+    override suspend fun getUsersRegisteredAfter(currentUserId: String): List<User> {
+        return database.repositoryDao().getUsersRegisteredAfter(currentUserId).map { it.toUser() }
     }
 }

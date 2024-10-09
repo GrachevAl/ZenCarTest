@@ -54,7 +54,7 @@ android {
 }
 
 dependencies {
-
+    implementation (libs.androidx.core.splashscreen)
     implementation(libs.dagger.hilt)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.coil)

@@ -1,5 +1,6 @@
 [versions]
 agp = "8.4.1"
+coreSplashscreen = "1.0.0-beta02"
 kotlin = "2.0.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -25,6 +26,7 @@ serializationVersion = "2.0.0"
 serializationKotlin = "1.7.1"
 
 [libraries]
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 kotlinx-serialization-json= { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationKotlin" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

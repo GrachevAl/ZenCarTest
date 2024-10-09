@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SnackBarToast(
     snackbarMessage: SnackbarMessage?,
-    context: Context
+    context: Context,
 ) {
     snackbarMessage?.let { message ->
         val coroutineScope = rememberCoroutineScope()
@@ -55,7 +55,6 @@ fun SnackBarToast(
             onDispose {
                 snackbarVisibleState.value = false
             }
-
         }
 
         Snackbar(
@@ -68,7 +67,7 @@ fun SnackBarToast(
                 }) {
                     Text(text = "Закрыть", color = colorResource(id = R.color.purple_700))
                 }
-            }
+            },
         ) {
             Text(message.toMessage(context.resources), fontSize = 12.sp)
         }

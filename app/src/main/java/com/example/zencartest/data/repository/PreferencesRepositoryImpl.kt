@@ -47,7 +47,6 @@ class PreferencesRepositoryImpl @Inject constructor(
             }
     }
 
-    // Очистка токена пользователя (выход)
     override suspend fun clearUserTokenFromDataStorage() {
         context.dataStore.edit { pref ->
             pref.clear()
