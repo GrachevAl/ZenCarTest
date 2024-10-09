@@ -29,7 +29,6 @@
   <img src="https://github.com/GrachevAl/assets/blob/main/listUsers.jpg" width="200" />
   <img src="https://github.com/GrachevAl/assets/blob/main/listUsersDelete.jpg" width="200" />
   <img src="https://github.com/GrachevAl/assets/blob/main/dialog.jpg" width="200" />
-  <img src="https://github.com/GrachevAl/assets/blob/main/5424646972087852238.jpg" width="200" />
 
 </p>
 
